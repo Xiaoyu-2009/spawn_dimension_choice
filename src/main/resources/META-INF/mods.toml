@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All rights reserved"
+
+[[mods]]
+modId="spawn_dimension_choice"
+version="1.0.0"
+displayName="诞生维度自选"
+logoFile="pack.png"
+authors="Xiaoyu_2009"
+displayURL="https://space.bilibili.com/506597031"
+description='''
+Birth Dimension Selection - Allows players to customize the dimension they are born in
+'''
+
+[[dependencies.spawn_dimension_choice]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.spawn_dimension_choice]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH" 
