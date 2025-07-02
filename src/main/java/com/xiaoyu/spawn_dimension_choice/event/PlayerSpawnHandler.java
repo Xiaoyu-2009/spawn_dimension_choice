@@ -37,29 +37,75 @@ public class PlayerSpawnHandler {
                 
                 try {
                     String selectedDimension = SpawnDimensionChoice.getSelectedDimension();
-                    ResourceKey<Level> targetDimension = getTargetDimension(selectedDimension);
                     
-                    ServerLevel targetLevel = player.getServer().getLevel(targetDimension);
+                    // 直接使用维度ID字符串
+                    ServerLevel targetLevel = null;
+                    
+                    // 遍历所有维度，查找匹配的维度
+                    for (ServerLevel level : player.getServer().getAllLevels()) {
+                        String levelId = level.dimension().location().toString();
+                        // 检查是否包含维度ID (部分匹配也接受)
+                        if (levelId.contains(selectedDimension) || selectedDimension.contains(levelId)) {
+                            targetLevel = level;
+                            break;
+                        }
+                    }
+                    
+                    // 如果还没找到，尝试原版维度
+                    if (targetLevel == null) {
+                        if (selectedDimension.contains("overworld")) {
+                            targetLevel = player.getServer().getLevel(Level.OVERWORLD);
+                        } else if (selectedDimension.contains("nether")) {
+                            targetLevel = player.getServer().getLevel(Level.NETHER);
+                        } else if (selectedDimension.contains("end")) {
+                            targetLevel = player.getServer().getLevel(Level.END);
+                        }
+                    }
+
+                    if (targetLevel == null && selectedDimension.contains(":")) {
+                        try {
+                            String[] parts = selectedDimension.split(":");
+                            if (parts.length >= 2) {
+                                String namespace = parts[0];
+                                String path = parts[1];
+                                
+                                // 尝试匹配所有维度的命名空间和路径
+                                for (ServerLevel level : player.getServer().getAllLevels()) {
+                                    String levelNamespace = level.dimension().location().getNamespace();
+                                    String levelPath = level.dimension().location().getPath();
+                                    
+                                    if (levelNamespace.contains(namespace) || namespace.contains(levelNamespace)) {
+                                        if (levelPath.contains(path) || path.contains(levelPath)) {
+                                            targetLevel = level;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                    
                     if (targetLevel != null) {
+                        final ServerLevel finalTargetLevel = targetLevel;
                         player.getServer().execute(() -> {
                             try {
                                 BlockPos initialSearchPos;
                                 
-                                if (targetDimension == Level.NETHER) {
+                                if (finalTargetLevel.dimension() == Level.NETHER) {
                                     initialSearchPos = new BlockPos(0, 65, 0);
                                 } else {
                                     initialSearchPos = new BlockPos(0, 64, 0);
                                 }
                                 
-                                BlockPos spawnPos = findSafeSpawnLocation(targetLevel, initialSearchPos);
-                                boolean applySafety = shouldApplySafetyFeatures(targetDimension);
+                                BlockPos spawnPos = findSafeSpawnLocation(finalTargetLevel, initialSearchPos);
+                                boolean applySafety = shouldApplySafetyFeatures(finalTargetLevel.dimension());
                                 
                                 if (applySafety) {
-                                    ensurePlatformExists(targetLevel, spawnPos);
-                                    clearSpaceAroundPlayer(targetLevel, spawnPos);
+                                    ensurePlatformExists(finalTargetLevel, spawnPos);
+                                    clearSpaceAroundPlayer(finalTargetLevel, spawnPos);
                                 }
                                 
-                                player.teleportTo(targetLevel, spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, 
+                                player.teleportTo(finalTargetLevel, spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, 
                                         player.getYRot(), player.getXRot());
                                 
                             } catch (Exception e) {}
@@ -294,23 +340,5 @@ public class PlayerSpawnHandler {
         boolean hasSpace = atPos.isAir() && abovePos.isAir();
         
         return isSolid && hasSpace;
-    }
-    
-    /**
-     * 根据维度ID获取对应的维度ResourceKey
-     * @param dimensionName 维度ID
-     * @return 维度ResourceKey
-     */
-    private static ResourceKey<Level> getTargetDimension(String dimensionName) {
-        if (dimensionName.equals("overworld")) return Level.OVERWORLD;
-        if (dimensionName.equals("the_nether")) return Level.NETHER;
-        if (dimensionName.equals("the_end")) return Level.END;
-        
-        try {
-            ResourceLocation dimLocation = new ResourceLocation(dimensionName);
-            return ResourceKey.create(ResourceKey.createRegistryKey(new ResourceLocation("dimension")), dimLocation);
-        } catch (Exception e) {
-            return Level.OVERWORLD;
-        }
     }
 } 

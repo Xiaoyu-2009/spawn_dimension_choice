@@ -29,30 +29,29 @@ public class SpawnDimensionChoice {
     }
 
     private void setup(final FMLCommonSetupEvent event) {}
-    
-    /**
-     * 设置选定的维度
-     * @param dimension 维度ID
-     */
+
     public static void setSelectedDimension(String dimension) {
         if (dimension == null || dimension.isEmpty()) {
             selectedDimension = "overworld";
             return;
         }
-        
-        // 验证维度ID格式是否符合ResourceLocation规范
+
         try {
-            new ResourceLocation(dimension);
-            selectedDimension = dimension;
+            // 如果是原版维度简写就保持原样
+            if (dimension.equals("overworld") || dimension.equals("the_nether") || dimension.equals("the_end")) {
+                selectedDimension = dimension;
+                return;
+            }
+            
+            // 确保维度ID格式正确
+            ResourceLocation dimLocation = new ResourceLocation(dimension);
+            // 保存完整的维度ID字符串，确保包含命名空间
+            selectedDimension = dimLocation.toString();
         } catch (Exception e) {
             selectedDimension = "overworld";
         }
     }
-    
-    /**
-     * 获取当前选择的维度
-     * @return 维度ID
-     */
+
     public static String getSelectedDimension() {
         return selectedDimension;
     }

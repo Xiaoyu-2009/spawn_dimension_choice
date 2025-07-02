@@ -4,7 +4,7 @@ license="All rights reserved"
 
 [[mods]]
 modId="spawn_dimension_choice"
-version="1.0.0"
+version="1.0.1"
 displayName="诞生维度自选"
 logoFile="pack.png"
 authors="Xiaoyu_2009"

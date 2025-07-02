@@ -102,6 +102,7 @@ public class WorldCreationEventHandler {
             );
             customDimensionInput.setValue(lastCustomDimensionValue.isEmpty() ? "minecraft:overworld" : lastCustomDimensionValue);
             customDimensionInput.setVisible(useCustomDimension);
+            customDimensionInput.setMaxLength(100);
             customDimensionInput.setResponder(text -> {
                 if (!text.isEmpty()) {
                     lastCustomDimensionValue = text;
