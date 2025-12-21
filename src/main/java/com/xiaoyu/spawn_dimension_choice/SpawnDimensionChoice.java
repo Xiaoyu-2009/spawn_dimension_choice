@@ -13,7 +13,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(SpawnDimensionChoice.MOD_ID)
-public class SpawnDimensionChoice {
+公共 class SpawnDimensionChoice {
     public static final String MOD_ID = "spawn_dimension_choice";
     
     private static String selectedDimension = "overworld";
@@ -37,15 +37,12 @@ public class SpawnDimensionChoice {
         }
 
         try {
-            // 如果是原版维度简写就保持原样
             if (dimension.equals("overworld") || dimension.equals("the_nether") || dimension.equals("the_end")) {
                 selectedDimension = dimension;
                 return;
             }
-            
-            // 确保维度ID格式正确
+
             ResourceLocation dimLocation = new ResourceLocation(dimension);
-            // 保存完整的维度ID字符串，确保包含命名空间
             selectedDimension = dimLocation.toString();
         } catch (Exception e) {
             selectedDimension = "overworld";
