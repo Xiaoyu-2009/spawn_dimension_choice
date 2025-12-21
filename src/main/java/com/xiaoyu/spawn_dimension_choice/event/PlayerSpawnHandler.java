@@ -19,14 +19,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = SpawnDimensionChoice.MOD_ID)
-public class PlayerSpawnHandler {
-    // 平台的大小 (n x n)，必须是奇数以确保玩家在中心
+公共 class PlayerSpawnHandler {
     private static final int PLATFORM_SIZE = 5;
-    // 清除空间的宽度
     private static final int CLEAR_WIDTH = 5;
-    // 清除空间的高度
     private static final int CLEAR_HEIGHT = 4;
-    // 清除空间的长度
     private static final int CLEAR_LENGTH = 5;
 
     @SubscribeEvent
@@ -37,21 +33,16 @@ public class PlayerSpawnHandler {
                 
                 try {
                     String selectedDimension = SpawnDimensionChoice.getSelectedDimension();
-                    
-                    // 直接使用维度ID字符串
                     ServerLevel targetLevel = null;
-                    
-                    // 遍历所有维度，查找匹配的维度
+
                     for (ServerLevel level : player.getServer().getAllLevels()) {
                         String levelId = level.dimension().location().toString();
-                        // 检查是否包含维度ID (部分匹配也接受)
                         if (levelId.contains(selectedDimension) || selectedDimension.contains(levelId)) {
                             targetLevel = level;
                             break;
                         }
                     }
-                    
-                    // 如果还没找到，尝试原版维度
+
                     if (targetLevel == null) {
                         if (selectedDimension.contains("overworld")) {
                             targetLevel = player.getServer().getLevel(Level.OVERWORLD);
@@ -68,8 +59,7 @@ public class PlayerSpawnHandler {
                             if (parts.length >= 2) {
                                 String namespace = parts[0];
                                 String path = parts[1];
-                                
-                                // 尝试匹配所有维度的命名空间和路径
+
                                 for (ServerLevel level : player.getServer().getAllLevels()) {
                                     String levelNamespace = level.dimension().location().getNamespace();
                                     String levelPath = level.dimension().location().getPath();
@@ -134,17 +124,10 @@ public class PlayerSpawnHandler {
             }
         }
     }
-    
-    /**
-     * 检查是否应该在指定维度应用安全功能
-     * @param dimension 目标维度
-     * @return 是否应用安全功能
-     */
+
     private static boolean shouldApplySafetyFeatures(ResourceKey<Level> dimension) {
-        // 获取维度ID字符串
         String dimensionId = dimension.location().toString();
-        
-        // 获取配置中的黑名单和白名单
+
         List<String> whitelist = SpawnDimensionConfig.COMMON.whitelistDimensions.get();
         List<String> blacklist = SpawnDimensionConfig.COMMON.blacklistDimensions.get();
 
@@ -157,12 +140,7 @@ public class PlayerSpawnHandler {
         }
         return true;
     }
-    
-    /**
-     * 确保玩家脚下有一个平台
-     * @param level 世界
-     * @param playerPos 玩家位置
-     */
+
     public static void ensurePlatformExists(ServerLevel level, BlockPos playerPos) {
         BlockPos belowPos = playerPos.below();
         BlockState belowState = level.getBlockState(belowPos);
@@ -192,12 +170,7 @@ public class PlayerSpawnHandler {
             }
         }
     }
-    
-    /**
-     * 清除玩家周围的方块
-     * @param level 世界
-     * @param playerPos 玩家位置
-     */
+
     public static void clearSpaceAroundPlayer(ServerLevel level, BlockPos playerPos) {
         BlockState atPos = level.getBlockState(playerPos);
         BlockState abovePos = level.getBlockState(playerPos.above());
@@ -216,13 +189,7 @@ public class PlayerSpawnHandler {
             }
         }
     }
-    
-    /**
-     * 寻找安全的出生位置
-     * @param level 目标世界
-     * @param initialPos 初始位置
-     * @return 安全的出生位置
-     */
+
     private static BlockPos findSafeSpawnLocation(ServerLevel level, BlockPos initialPos) {
         int x = 0;
         int z = 0;
@@ -322,13 +289,7 @@ public class PlayerSpawnHandler {
             return new BlockPos(0, 64, 0);
         }
     }
-    
-    /**
-     * 检查位置是否安全
-     * @param level 目标世界
-     * @param pos 要检查的位置
-     * @return 位置是否安全
-     */
+
     private static boolean isSafeLocation(ServerLevel level, BlockPos pos) {
         BlockPos belowPos = pos.below();
         BlockState belowState = level.getBlockState(belowPos);
