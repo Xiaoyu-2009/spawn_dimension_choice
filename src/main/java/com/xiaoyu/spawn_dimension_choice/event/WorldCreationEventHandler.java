@@ -15,34 +15,24 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * 处理世界生成创建相关的事件
- */
 @Mod.EventBusSubscriber(modid = SpawnDimensionChoice.MOD_ID, value = Dist.CLIENT)
-public class WorldCreationEventHandler {
-    // 预设维度列表
+公共 class WorldCreationEventHandler {
     private static final List<String> PRESET_DIMENSIONS = Arrays.asList(
             "overworld", "the_nether", "the_end"
     );
+    
     private static EditBox customDimensionInput;
     private static boolean useCustomDimension = false;
-    // 预设维度选择
     private static String lastSelectedPresetDimension = "overworld";
-    // 自定义维度输入值
     private static String lastCustomDimensionValue = "";
     private static CycleButton<String> dimensionButton;
     private static Button customDimensionButton;
     private static CreateWorldScreen currentScreen;
-    
-    // 第一个按钮的X坐标
+
     private static final int FIRST_BUTTON_X = 85;
-    // 第一个按钮的Y坐标
     private static final int FIRST_BUTTON_Y = 170;
-    // 按钮宽度
     private static final int BUTTON_WIDTH = 150;
-    // 按钮高度
     private static final int BUTTON_HEIGHT = 20;
-    // 按钮之间的间距 
     private static final int BUTTON_SPACING = 10;
     
     @SubscribeEvent
