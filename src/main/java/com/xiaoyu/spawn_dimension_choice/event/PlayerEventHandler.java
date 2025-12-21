@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = SpawnDimensionChoice.MOD_ID)
-public class PlayerEventHandler {
+公共 class PlayerEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
@@ -25,21 +25,16 @@ public class PlayerEventHandler {
                 
                 try {
                     String selectedDimension = SpawnDimensionChoice.getSelectedDimension();
-                    
-                    // 直接使用维度ID字符串
                     ServerLevel targetLevel = null;
-                    
-                    // 遍历所有维度，查找匹配的维度
+
                     for (ServerLevel level : player.getServer().getAllLevels()) {
                         String levelId = level.dimension().location().toString();
-                        // 检查是否包含维度ID (部分匹配也接受)
                         if (levelId.contains(selectedDimension) || selectedDimension.contains(levelId)) {
                             targetLevel = level;
                             break;
                         }
                     }
-                    
-                    // 如果还没找到，尝试原版维度
+
                     if (targetLevel == null) {
                         if (selectedDimension.contains("overworld")) {
                             targetLevel = player.getServer().getLevel(Level.OVERWORLD);
@@ -56,8 +51,7 @@ public class PlayerEventHandler {
                             if (parts.length >= 2) {
                                 String namespace = parts[0];
                                 String path = parts[1];
-                                
-                                // 尝试匹配所有维度的命名空间和路径
+
                                 for (ServerLevel level : player.getServer().getAllLevels()) {
                                     String levelNamespace = level.dimension().location().getNamespace();
                                     String levelPath = level.dimension().location().getPath();
@@ -118,12 +112,7 @@ public class PlayerEventHandler {
             }
         }
     }
-    
-    /**
-     * 查找安全的下界位置 [避开上层基岩]
-     * @param netherLevel 下界维度
-     * @return 安全的出生位置
-     */
+
     private static BlockPos findSafeNetherPosition(ServerLevel netherLevel) {
         int x = 0;
         int z = 0;
@@ -137,13 +126,7 @@ public class PlayerEventHandler {
         
         return new BlockPos(0, 65, 0);
     }
-    
-    /**
-     * 检查位置是否安全
-     * @param level 世界
-     * @param pos 位置
-     * @return 是否安全
-     */
+
     private static boolean isSafeLocation(ServerLevel level, BlockPos pos) {
         BlockPos belowPos = pos.below();
         BlockState belowState = level.getBlockState(belowPos);
@@ -154,12 +137,7 @@ public class PlayerEventHandler {
         return !belowState.isAir() && belowState.isSolidRender(level, belowPos) && 
                atPos.isAir() && abovePos.isAir();
     }
-    
-    /**
-     * 检查是否应该在指定维度应用安全功能
-     * @param dimension 目标维度
-     * @return 是否应用安全功能
-     */
+
     private static boolean shouldApplySafetyFeatures(ResourceKey<Level> dimension) {
         String dimensionId = dimension.location().toString();
         
